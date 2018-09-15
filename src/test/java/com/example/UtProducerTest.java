@@ -15,8 +15,6 @@ import java.util.concurrent.TimeoutException;
  */
 @Slf4j
 public class UtProducerTest {
-    private static final String RABBITMQ_EXCHANGE_KEY = "hello-exchange";
-
     private ConnectionFactory factory;
 
     @Before
@@ -31,10 +29,10 @@ public class UtProducerTest {
     public void testTaskProducer() throws IOException, TimeoutException, InterruptedException {
         Connection conn = factory.newConnection();
         Channel channel = conn.createChannel();
-        channel.exchangeDeclare(RABBITMQ_EXCHANGE_KEY, "direct", true);
+        channel.exchangeDeclare("task-exchange", "direct", true);
 
         for (int i = 0; i < 10; i++) {
-            channel.basicPublish(RABBITMQ_EXCHANGE_KEY, "task", null, String.format("task..%d", i).getBytes());
+            channel.basicPublish("task-exchange", "task", null, String.format("task...%d", i).getBytes());
             Thread.sleep(1000L);
         }
 
@@ -46,10 +44,10 @@ public class UtProducerTest {
     public void testUserProducer() throws IOException, TimeoutException, InterruptedException {
         Connection conn = factory.newConnection();
         Channel channel = conn.createChannel();
-        channel.exchangeDeclare(RABBITMQ_EXCHANGE_KEY, "direct", true);
+        channel.exchangeDeclare("user-exchange", "direct", true);
 
         for (int i = 0; i < 10; i++) {
-            channel.basicPublish(RABBITMQ_EXCHANGE_KEY, "user", null, String.format("user..%d", i % 3).getBytes());
+            channel.basicPublish("user-exchange", "user", null, String.format("user...%d", i % 3).getBytes());
             Thread.sleep(2000L);
         }
 

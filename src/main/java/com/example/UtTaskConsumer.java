@@ -15,8 +15,8 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 @Component
 public class UtTaskConsumer implements InitializingBean {
-    private static final String RABBITMQ_QUEUE_NAME = "human_result";
-    private static final String RABBITMQ_EXCHANGE_KEY = "hello-exchange";
+    private static final String RABBITMQ_QUEUE_NAME = "allocate-task";
+    private static final String RABBITMQ_EXCHANGE_KEY = "task-exchange";
     private static final String RABBITMQ_ROUTING_KEY = "task";
     private BlockingQueue blockingQueue;
 
