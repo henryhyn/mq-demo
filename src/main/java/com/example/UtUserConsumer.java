@@ -3,11 +3,10 @@ package com.example;
 import com.rabbitmq.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by henry on 2018/9/15.
@@ -18,15 +17,9 @@ public class UtUserConsumer implements InitializingBean {
     private static final String RABBITMQ_QUEUE_NAME = "allocate-user";
     private static final String RABBITMQ_EXCHANGE_KEY = "user-exchange";
     private static final String RABBITMQ_ROUTING_KEY = "user";
-    private BlockingQueue blockingQueue;
 
-    public UtUserConsumer() {
-        blockingQueue = new ArrayBlockingQueue(2);
-    }
-
-    public Object getUser() throws InterruptedException {
-        return blockingQueue.take();
-    }
+    @Autowired
+    private UtTaskConsumer utTaskConsumer;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -46,9 +39,9 @@ public class UtUserConsumer implements InitializingBean {
                 String bodyStr = new String(body, "UTF-8");
                 log.info("加入 {}", bodyStr);
                 try {
-                    blockingQueue.put(bodyStr);
+                    log.info("{} => {}", bodyStr, utTaskConsumer.getTask());
                 } catch (InterruptedException e) {
-                    log.error("加入 {} 失败", bodyStr, e);
+                    log.error("任务处理失败!");
                 }
             }
         });
